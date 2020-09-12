@@ -11,20 +11,28 @@ def read_data(data_file, attributes_file, delim=" "):
             * delim: default " "; how attributes of a record in the file are delimited 
     '''
     attrs = []
+    attr_dict = {}
     with open(attributes_file) as f:
+
         for line in f:
             line = line.split(" ")
+            print(line)
+            attr_name = line[0]
+            attrs.append(attr_name)
+            attr_values = line[1:]
+            attr_values = [val.strip() for val in attr_values]
+            attr_dict[attr_name] = attr_values 
 
-            attrs.append(line[0])
 
     data = pd.read_csv(data_file, delimiter=delim, header=None)
     data.columns = attrs
-    return data
+    return data, attr_dict
 
 
 
 if __name__ == "__main__":
-    df = read_data("data/ids-train.txt", "data/ids-attr.txt")
+    df, attr_dict = read_data("data/ids-train.txt", "data/ids-attr.txt")
     print(df)
-    df = read_data("data/ids-test.txt", "data/ids-attr.txt")
+    print(attr_dict)
+    df, attr_dict = read_data("data/ids-test.txt", "data/ids-attr.txt")
     print(df)

@@ -20,7 +20,7 @@ def read_data(data_file, attributes_file, delim=" "):
             attr_name = line[0]
             attrs.append(attr_name)
             attr_values = line[1:]
-            attr_values = [val.strip() for val in attr_values]
+            attr_values = [val.strip('\n') for val in attr_values]
             attr_dict[attr_name] = attr_values 
 
 

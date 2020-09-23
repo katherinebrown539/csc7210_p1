@@ -16,16 +16,17 @@ def read_data(data_file, attributes_file, delim=" "):
 
         for line in f:
             line = line.split(" ")
-            print(line)
             attr_name = line[0]
             attrs.append(attr_name)
             attr_values = line[1:]
-            attr_values = [val.strip('\n') for val in attr_values]
+            attr_values = [val.rstrip('\n') for val in attr_values]
             attr_dict[attr_name] = attr_values 
 
 
     data = pd.read_csv(data_file, delimiter=delim, header=None)
+    print(data)
     data.columns = attrs
+    print(attr_dict)
     return data, attr_dict
 
 
@@ -34,5 +35,6 @@ if __name__ == "__main__":
     df, attr_dict = read_data("data/ids-train.txt", "data/ids-attr.txt")
     print(df)
     print(attr_dict)
+    
     df, attr_dict = read_data("data/ids-test.txt", "data/ids-attr.txt")
     print(df)

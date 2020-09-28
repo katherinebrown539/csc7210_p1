@@ -3,6 +3,8 @@ import numpy as np
 from read_data import read_data
 from collections import Counter, OrderedDict
 import pprint
+import json
+import sys
 
 def DecisionTreeLearning(examples, attributes, default, class_column):
     """
@@ -14,23 +16,23 @@ def DecisionTreeLearning(examples, attributes, default, class_column):
             * default: default value of tree
             * class_column: the column in the dataframe that contains the class
     """
-    print("# examples: ", examples.shape[0])
-    print("# classes: ", examples[class_column].unique().shape[0])
-    print("available attributes: ", len(attributes))
+    # print("# examples: ", examples.shape[0])
+    # print("# classes: ", examples[class_column].unique().shape[0])
+    # print("available attributes: ", len(attributes))
     
     if examples.shape[0] == 0: 
-        print("no examples left")
+        # print("no examples left")
         return default
     elif examples[class_column].unique().shape[0] == 1: #have the same classification
-        print("all examples are same class")
+        # print("all examples are same class")
         return examples[class_column].unique()[0] 
-    elif len(attributes.keys()) == 0:
-        print("no attributes left")
+    elif len(attributes.keys()) == 1:
+        # print("no attributes left")
         return MajorityValue(examples, class_column) 
     else:
         best = ChooseAttribute(attributes, examples, class_column)
         print("Chosen Attribute: ", best)
-        tree = {}
+        tree = OrderedDict()
         tree["attribute_name"]= best
         values = attributes[best]
         del attributes[best]
@@ -42,11 +44,14 @@ def DecisionTreeLearning(examples, attributes, default, class_column):
     
 def MajorityValue(examples, class_column):
     classes = examples[class_column]
-    return Counter(classes).most_common(1)
+    majority = Counter(classes).most_common(1)
+    print(type(majority))
+    return majority[0][0]
 
 def ChooseAttribute(attributes, examples, class_column):
-    max_info_gain = 0
+    max_info_gain = -100
     attribute = None
+    print(attributes.keys())
     for key in attributes.keys():
         if key == class_column: continue
         class_entropy = calc_entropy(values=examples[class_column])
@@ -78,10 +83,19 @@ def calc_entropy_attr(examples, attribute, class_column):
         index += 1
     return entropy
 
-def print_tree(tree):
-    # pp = pprint.PrettyPrinter(indent=4)
-    pprint.pprint(tree, indent=4)
+def convert_to_dictionary(tree):
+    return tree #json.loads(json.dumps(tree))
 
+def print_tree(tree, depth=0):
+    print("\t"*depth, "attribute_name: ", tree["attribute_name"])
+    for key, value in tree.items():
+        if key == "attribute_name": continue
+        if isinstance(value, str):
+            print("\t"*depth, key, ": ", tree[key])
+        elif isinstance(value, OrderedDict):
+            print("\t"*depth, key, ":")
+            print_tree(value, depth+1)
+    
 def predict_point(y, tree):
     if isinstance(tree, str): return tree
     attr = tree['attribute_name']
@@ -89,6 +103,7 @@ def predict_point(y, tree):
     return predict_point(y, tree[y_attr])
 
 def predict(test_data, tree, class_column="class"):
+    tree = json.loads(json.dumps(tree))
     predictions = []
     for index, row in test_data.iterrows():
         pred = predict_point(row, tree)
@@ -107,11 +122,19 @@ def accuracy_score(y_pred, y_true):
     return correct/total
 
 if __name__ == "__main__":
-    train_data, train_attr = read_data("data/ids-train.txt", "data/ids-attr.txt")
-    test_data, test_attr = read_data("data/ids-test.txt", "data/ids-attr.txt")
-    # train_data, train_attr = read_data("data/restaurant_train.txt", "data/restaurant_attr.txt")
-    # test_data, test_attr = read_data("data/restaurant_test.txt", "data/restaurant_attr.txt")
-    tree = DecisionTreeLearning(train_data, train_attr, 0, "class")
+    attr = sys.argv[1]
+    train = sys.argv[2]
+    test = sys.argv[3]
+    
+    remove_columns = ["srv_serror_rate", "serror_rate", "count", "same_srv_rate", "srv_diff_host_rate", "srv_count"]
+    train_data, train_attr = read_data(train, attr, remove_columns=remove_columns)
+    test_data, test_attr = read_data(test, attr, remove_columns=remove_columns)
+    tree = DecisionTreeLearning(train_data, train_attr, "normal", "class")
+
     print_tree(tree)
+    y_pred, y_true = predict(train_data, tree)
+    train_acc = accuracy_score(y_pred, y_true)
+    print('Accuracy on Training Data: {0}'.format(train_acc*100))
     y_pred, y_true = predict(test_data, tree)
-    print(accuracy_score(y_pred, y_true))
+    test_acc = accuracy_score(y_pred, y_true)
+    print('Accuracy on Testing Data: {0}'.format( test_acc*100))

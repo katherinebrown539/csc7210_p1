@@ -1,6 +1,6 @@
 import pandas as pd
 
-def read_data(data_file, attributes_file, delim=" "):
+def read_data(data_file, attributes_file, delim=" ", remove_columns = None):
     '''
         This function opens a data file and stores it in a pandas dataframe that is returned.
         The file provided must be space-delimited
@@ -24,9 +24,16 @@ def read_data(data_file, attributes_file, delim=" "):
 
 
     data = pd.read_csv(data_file, delimiter=delim, header=None)
-    print(data)
+    # print(data)
     data.columns = attrs
-    print(attr_dict)
+    data = data.sample(frac=1)
+    # print(attr_dict)
+
+    if remove_columns is not None:
+        data.drop(remove_columns, axis=1, inplace=True)
+        for col in remove_columns:
+            del attr_dict[col]
+
     return data, attr_dict
 
 

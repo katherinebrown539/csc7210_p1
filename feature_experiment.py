@@ -59,7 +59,7 @@ def visualize(train_accs, test_accs):
     x = list(range(len(train_accs)))
     ax.plot(x, train_accs, label="Training Accuracy", marker='.')
     ax.plot(x, test_accs, label="Testing Accuracy", marker=".")
-    ax.set_title("Decision Tree Performance as Features are Removed")
+    ax.set_title("Decision Tree (SK-Entropy) Performance as Features are Removed")
     ax.set_xlabel("ith Feature Removed")
     ax.set_ylabel("Classifier Accuracy")
     ax.set_xticks(x)
@@ -94,5 +94,5 @@ if __name__ == "__main__":
     print(removal_order)
 
     # train_accs, test_accs = remove_features(removal_order, train, test, attr, len(columns))
-    train_accs, test_accs = remove_features_sklearn(criterion="entropy", splitter="best", removal_order=removal_order, train_file=train, test_file=test, attr_file=attr, max_features=len(columns))
+    train_accs, test_accs = remove_features_sklearn(criterion="entropy", splitter="random", removal_order=removal_order, train_file=train, test_file=test, attr_file=attr, max_features=len(columns))
     visualize(train_accs, test_accs)

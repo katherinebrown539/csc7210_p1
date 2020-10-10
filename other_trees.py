@@ -61,10 +61,10 @@ if __name__ == "__main__":
     train = sys.argv[2]
     test = sys.argv[3]
 
-    remove_columns = ["srv_serror_rate", "serror_rate", "count", "same_srv_rate", "srv_diff_host_rate", "srv_count"]
+    remove_columns = ["srv_serror_rate", "serror_rate", "same_srv_rate", "count"]
     train_data, train_attr = read_data(train, attr, remove_columns=remove_columns)
     test_data, test_attr = read_data(test, attr, remove_columns=remove_columns)
     sklearn_decision_tree(criterion="entropy", splitter="best", train_data=train_data, test_data=test_data, attr=train_attr, class_column="class", ds_name="custom")
     sklearn_decision_tree(criterion="gini", splitter="best", train_data=train_data, test_data=test_data, attr=train_attr, class_column="class", ds_name="custom")
-    sklearn_decision_tree(criterion="entropy", splitter="random", train_data=train_data, test_data=test_data, attr=train_attr, class_column="class", ds_name="custom")
-    sklearn_decision_tree(criterion="gini", splitter="random", train_data=train_data, test_data=test_data, attr=train_attr, class_column="class", ds_name="custom")
+    # sklearn_decision_tree(criterion="entropy", splitter="random", train_data=train_data, test_data=test_data, attr=train_attr, class_column="class", ds_name="custom")
+    # sklearn_decision_tree(criterion="gini", splitter="random", train_data=train_data, test_data=test_data, attr=train_attr, class_column="class", ds_name="custom")

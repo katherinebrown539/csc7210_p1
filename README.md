@@ -4,6 +4,9 @@
 ### Introduction
 Please run my code on a Unix system. Although the code should work on Windows, it has been verified to run on MacOS and Linux.
 
+### About
+This is a custom implementation of the Iterative Dichotomiser 3 (ID3) algorithm for generating decision trees. This project used a custom version of the KDD Cup 1999 dataset to detect various cyber attacks on a network system. 
+
 ### Anaconda
 To run my code, you will need to install several Python libraries. I recommend using Anaconda's virtual environments. Otherwise, feel free to skip to the "Package Installation" section
 
@@ -19,7 +22,7 @@ You will then need to activate the environment to further install packages and r
 `conda activate csc7210`
 
 ### Package Installation
-You will need to install the following packages to run any file in the submission. Scikit-Learn and Matplotlib are used to implement the decision trees that my implementation is to be compared to. I promise I implemented my decision tree myself! :)
+You will need to install the following packages to run any file in the submission. Scikit-Learn and Matplotlib are used to implement the decision trees that my implementation is to be compared to.
 
 `conda install pandas=0.25.1`
 `conda install numpy=1.17.2`
